@@ -19,20 +19,20 @@ void glfwSetKeyCallback(GLFWwindow *window, int key, int scancode, int action, i
 }
 
 GLfloat points[] = {
-        0.5f, 0.0f, 0.0f,
-        0.0f, 0.5, 0.0f,
-        0.0f, 1.0f, 0.5f
+        0.0f, 0.5f, 0.0f,
+        0.5f, -0.5, 0.0f,
+        -0.5f, -0.5f, 0.0f
 };
 
 GLfloat colors[] = {
         1.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f
+        0.0f, 0.0f, 1.0f
 };
 
-const char *vertex_shader = "#version 460\n"
-                            "layout(location 0) in vec3 ver_pos;"
-                            "layout(location 1) in vec3 ver_color;"
+const char *vertex_shader = "#version 410\n"
+                            "layout(location = 0) in vec3 ver_pos;"
+                            "layout(location = 1) in vec3 ver_color;"
                             "out vec3 color;"
                             "void main() {"
                             "  color = ver_color;"
@@ -40,7 +40,7 @@ const char *vertex_shader = "#version 460\n"
                             "}"
         ;
 
-const char *fragment_shader = "#version 460\n"
+const char *fragment_shader = "#version 410\n"
                             "in vec3 color;"
                             "out vec4 frag_color;"
                             "void main() {"
@@ -54,6 +54,11 @@ int main(void) {
     /* Initialize the library */
     if (!glfwInit())
         return -1;
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(g_WindowWidth, g_WindowHeight, "Hello World", NULL, NULL);
@@ -76,7 +81,7 @@ int main(void) {
     std::cout << "Renderer:" << glGetString(GL_RENDERER) << std::endl;
     std::cout << "OpenGL:" << glGetString(GL_VERSION) << std::endl;
 
-    glClearColor(1, 0, 0, 0);
+    glClearColor(1, 1, 0.5, 0);
 
     GLuint vs = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vs, 1, &vertex_shader, nullptr);
