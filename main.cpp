@@ -2,18 +2,62 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-int main(void)
-{
-    GLFWwindow* window;
+int g_WindowWidth = 640;
+int g_WindowHeight = 480;
+
+void glfwWindowSizeCallback(GLFWwindow *window, int width, int height) {
+    g_WindowWidth = width;
+    g_WindowHeight = height;
+
+    glViewport(0, 0, width, height);
+};
+
+void glfwSetKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_ESCAPE) {
+        glfwSetWindowShouldClose(window, GL_TRUE);
+    }
+}
+
+GLfloat points[] = {
+        0.5f, 0.0f, 0.0f,
+        0.0f, 0.5, 0.0f,
+        0.0f, 1.0f, 0.5f
+};
+
+GLfloat colors[] = {
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f
+};
+
+const char *vertex_shader = "#version 460\n"
+                            "layout(location 0) in vec3 ver_pos;"
+                            "layout(location 1) in vec3 ver_color;"
+                            "out vec3 color;"
+                            "void main() {"
+                            "  color = ver_color;"
+                            "  gl_Position = vec4(ver_pos, 1.0);"
+                            "}"
+        ;
+
+const char *fragment_shader = "#version 460\n"
+                            "in vec3 color;"
+                            "out vec4 frag_color;"
+                            "void main() {"
+                            "  frag_color = vec4(color, 1.0);"
+                            "}"
+        ;
+
+int main(void) {
+    GLFWwindow *window;
 
     /* Initialize the library */
     if (!glfwInit())
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-    if (!window)
-    {
+    window = glfwCreateWindow(g_WindowWidth, g_WindowHeight, "Hello World", NULL, NULL);
+    if (!window) {
         glfwTerminate();
         return -1;
     }
@@ -21,19 +65,65 @@ int main(void)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
-    if(!gladLoadGL()) {
+    if (!gladLoadGL()) {
         std::cout << "cant load glad" << std::endl;
         return -1;
     }
 
-    std::cout << GLVersion.major << "." << GLVersion.minor << std::endl;
-    glClearColor(0, 0, 0, 0);
+    glfwSetWindowSizeCallback(window, glfwWindowSizeCallback);
+    glfwSetKeyCallback(window, glfwSetKeyCallback);
+
+    std::cout << "Renderer:" << glGetString(GL_RENDERER) << std::endl;
+    std::cout << "OpenGL:" << glGetString(GL_VERSION) << std::endl;
+
+    glClearColor(1, 0, 0, 0);
+
+    GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vs, 1, &vertex_shader, nullptr);
+    glCompileShader(vs);
+
+    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fs, 1, &fragment_shader, nullptr);
+    glCompileShader(fs);
+
+    GLuint sp = glCreateProgram();
+    glAttachShader(sp, vs);
+    glAttachShader(sp, fs);
+    glLinkProgram(sp);
+
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+
+    GLuint p_vb = 0;
+    glGenBuffers(1, &p_vb);
+    glBindBuffer(GL_ARRAY_BUFFER, p_vb);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+
+    GLuint c_vb = 0;
+    glGenBuffers(1, &c_vb);
+    glBindBuffer(GL_ARRAY_BUFFER, c_vb);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
+    GLuint vao = 0;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, p_vb);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, c_vb);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
     /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(sp);
+        glBindVertexArray(vao);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
