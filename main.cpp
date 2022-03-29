@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "source/Renderer/ShaderManager.h"
 
 int g_WindowWidth = 640;
 int g_WindowHeight = 480;
@@ -83,21 +84,10 @@ int main(void) {
 
     glClearColor(1, 1, 0.5, 0);
 
-    GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vs, 1, &vertex_shader, nullptr);
-    glCompileShader(vs);
-
-    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fs, 1, &fragment_shader, nullptr);
-    glCompileShader(fs);
-
-    GLuint sp = glCreateProgram();
-    glAttachShader(sp, vs);
-    glAttachShader(sp, fs);
-    glLinkProgram(sp);
-
-    glDeleteShader(vs);
-    glDeleteShader(fs);
+    Renderer::ShaderManager shaderManager(vertex_shader, fragment_shader);
+    if(!shaderManager.isReady()) {
+        std::cerr << "program didn't compile" << std::endl;
+    }
 
     GLuint p_vb = 0;
     glGenBuffers(1, &p_vb);
@@ -126,7 +116,7 @@ int main(void) {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(sp);
+        shaderManager.use();
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
