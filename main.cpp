@@ -87,6 +87,7 @@ int main(void) {
     Renderer::ShaderManager shaderManager(vertex_shader, fragment_shader);
     if(!shaderManager.isReady()) {
         std::cerr << "program didn't compile" << std::endl;
+        return -1;
     }
 
     GLuint p_vb = 0;

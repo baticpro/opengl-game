@@ -1,0 +1,11 @@
+#version 410
+
+layout(location = 0) in vec3 ver_pos;
+layout(location = 1) in vec3 ver_color;
+
+out vec3 color;
+
+void main() {
+    color = ver_color;
+    gl_Position = vec4(ver_pos, 1.0);
+}
