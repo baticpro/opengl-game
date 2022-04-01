@@ -5,7 +5,12 @@ project(${PROJECT_NAME})
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(${PROJECT_NAME} main.cpp source/Renderer/ShaderManager.cpp source/Renderer/ShaderManager.h source/Assets/AssetsManager.cpp source/Assets/AssetsManager.h)
+add_executable(${PROJECT_NAME} main.cpp
+        source/Renderer/ShaderManager.cpp
+        source/Renderer/ShaderManager.h
+        source/Assets/AssetsManager.cpp
+        source/Assets/AssetsManager.h
+        vendor/stb_image/stb_image.h)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -20,5 +25,5 @@ target_link_libraries(${PROJECT_NAME} glad)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${CMAKE_SOURCE_DIR}/assets ${CMAKE_BINARY_DIR}/bin/assets
+        ${CMAKE_SOURCE_DIR}/assets ${CMAKE_BINARY_DIR}/bin/assets
         )

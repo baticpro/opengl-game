@@ -15,7 +15,7 @@ namespace Renderer {
 
 class AssetsManager {
 public:
-    AssetsManager(std::string path);
+    AssetsManager(const std::string& path);
     ~AssetsManager() = default;
 
     AssetsManager(const AssetsManager&) = delete;
@@ -24,10 +24,14 @@ public:
     AssetsManager& operator=(AssetsManager&&) = delete;
 
     std::shared_ptr<Renderer::ShaderManager> loadShader(std::string name);
+    void loadTexture(std::string name);
 
 private:
+    std::string getFileContent(const std::string& relativePath);
+
     typedef std::map<std::string, std::shared_ptr<Renderer::ShaderManager>> ShadersMap;
     ShadersMap m_shaders;
+
     std::string m_path;
 };
 

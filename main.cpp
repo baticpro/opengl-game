@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "source/Renderer/ShaderManager.h"
+#include "source/Assets/AssetsManager.h"
 
 int g_WindowWidth = 640;
 int g_WindowHeight = 480;
@@ -49,8 +50,10 @@ const char *fragment_shader = "#version 410\n"
                             "}"
         ;
 
-int main(void) {
+int main(int arg, char** argv) {
     GLFWwindow *window;
+    AssetsManager assetsManager(argv[0]);
+    assetsManager.loadTexture("tiles-forest.png");
 
     /* Initialize the library */
     if (!glfwInit())
@@ -84,8 +87,9 @@ int main(void) {
 
     glClearColor(1, 1, 0.5, 0);
 
-    Renderer::ShaderManager shaderManager(vertex_shader, fragment_shader);
-    if(!shaderManager.isReady()) {
+    auto shaderManager = assetsManager.loadShader("default");
+
+    if(!shaderManager->isReady()) {
         std::cerr << "program didn't compile" << std::endl;
         return -1;
     }
@@ -117,7 +121,7 @@ int main(void) {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        shaderManager.use();
+        shaderManager->use();
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
