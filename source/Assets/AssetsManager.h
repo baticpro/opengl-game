@@ -11,6 +11,7 @@
 
 namespace Renderer {
     class ShaderManager;
+    class Texture2D;
 }
 
 class AssetsManager {
@@ -24,13 +25,15 @@ public:
     AssetsManager& operator=(AssetsManager&&) = delete;
 
     std::shared_ptr<Renderer::ShaderManager> loadShader(std::string name);
-    void loadTexture(std::string name);
-
+    std::shared_ptr<Renderer::Texture2D> loadTexture(std::string name);
 private:
     std::string getFileContent(const std::string& relativePath);
 
     typedef std::map<std::string, std::shared_ptr<Renderer::ShaderManager>> ShadersMap;
     ShadersMap m_shaders;
+
+    typedef std::map<std::string, std::shared_ptr<Renderer::Texture2D>> TexturesMap;
+    TexturesMap m_textures;
 
     std::string m_path;
 };

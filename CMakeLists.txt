@@ -10,7 +10,7 @@ add_executable(${PROJECT_NAME} main.cpp
         source/Renderer/ShaderManager.h
         source/Assets/AssetsManager.cpp
         source/Assets/AssetsManager.h
-        vendor/stb_image/stb_image.h)
+        vendor/stb_image/stb_image.h source/Renderer/Texture2D.cpp source/Renderer/Texture2D.h)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)

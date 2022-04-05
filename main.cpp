@@ -53,7 +53,6 @@ const char *fragment_shader = "#version 410\n"
 int main(int arg, char** argv) {
     GLFWwindow *window;
     AssetsManager assetsManager(argv[0]);
-    assetsManager.loadTexture("tiles-forest.png");
 
     /* Initialize the library */
     if (!glfwInit())
@@ -88,6 +87,7 @@ int main(int arg, char** argv) {
     glClearColor(1, 1, 0.5, 0);
 
     auto shaderManager = assetsManager.loadShader("default");
+    auto texture = assetsManager.loadTexture("tiles-forest.png");
 
     if(!shaderManager->isReady()) {
         std::cerr << "program didn't compile" << std::endl;

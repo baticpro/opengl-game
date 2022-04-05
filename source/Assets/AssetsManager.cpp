@@ -4,6 +4,7 @@
 
 #include "AssetsManager.h"
 #include "../Renderer/ShaderManager.h"
+#include "../Renderer/Texture2D.h"
 
 #include <utility>
 #include <fstream>
@@ -45,11 +46,16 @@ std::shared_ptr<Renderer::ShaderManager> AssetsManager::loadShader(std::string n
     return shader;
 }
 
-void AssetsManager::loadTexture(std::string name) {
+std::shared_ptr<Renderer::Texture2D> AssetsManager::loadTexture(std::string name) {
     int channels = 0, width = 0, height = 0;
     stbi_set_flip_vertically_on_load(true);
     std::string pathName = m_path + "/assets/textures/" + name;
     auto pixels = stbi_load(pathName.c_str(), &width, &height, &channels, 0);
 
+    auto texture2D = std::make_shared<Renderer::Texture2D>(width, height, pixels, channels);
+    m_textures.emplace(name, texture2D);
+
     stbi_image_free(pixels);
+
+    return texture2D;
 }
